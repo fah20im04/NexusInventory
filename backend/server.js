@@ -4,11 +4,18 @@ const cors = require("cors");
 require("dotenv").config();
 
 const Item = require("./models/Item"); // Import the model
+const bcrypt = require("bcryptjs");
 
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Allow your Next.js app
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // -------------------
@@ -42,6 +49,33 @@ app.get("/api/items", async (req, res) => {
     res.status(200).json(items);
   } catch (err) {
     res.status(500).json({ message: "Server Error: Could not fetch items" });
+  }
+});
+
+app.post("/api/register", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // 1. Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    // 2. Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 3. Create and save user
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
+    await newUser.save();
+    res.status(201).json({ message: "User registered successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error during registration" });
   }
 });
 
