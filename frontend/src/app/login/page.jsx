@@ -3,6 +3,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -24,9 +25,10 @@ export default function LoginPage() {
     setLoading(false);
 
     if (result.ok) {
-      router.push("/items"); // Redirect to items on success
+      toast.success("Login successful!");
+      router.push("/");
     } else {
-      alert("Invalid admin credentials. Use: admin@nexus.com / password123");
+      toast.error("Invalid admin credentials. Please try again.");
     }
   };
 

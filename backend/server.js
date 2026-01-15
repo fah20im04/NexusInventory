@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const Item = require("./models/Item"); // Import the model
 const bcrypt = require("bcryptjs");
+const User = require("./models/User"); // 👈 VERY IMPORTANT
 
 const app = express();
 
@@ -56,16 +57,17 @@ app.post("/api/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // 1. Check if user already exists
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // 2. Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 3. Create and save user
     const newUser = new User({
       name,
       email,
@@ -73,8 +75,10 @@ app.post("/api/register", async (req, res) => {
     });
 
     await newUser.save();
+
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
+    console.error("REGISTER ERROR:", err); // 👈 So you SEE the real crash reason
     res.status(500).json({ message: "Server error during registration" });
   }
 });

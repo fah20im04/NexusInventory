@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ export default function RegisterPage() {
     email: "",
     password: "",
   });
+
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -27,9 +29,20 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (res.ok) {
-        // Registration successful! Now log them in automatically or redirect
-        alert("Registration successful! Please login.");
-        router.push("/login");
+        await signIn("credentials", {
+          email: formData.email,
+          password: formData.password,
+          redirect: true,
+          callbackUrl: "/",
+        });
+
+        if (!loginRes.error) {
+          router.push("/");
+          toast.success("Registration and login successful!");
+        } else {
+          toast.error("Registration successful, but login failed.");
+          setError("Login failed after registration");
+        }
       } else {
         setError(data.message || "Something went wrong");
       }
@@ -45,28 +58,31 @@ export default function RegisterPage() {
           <h1 className="text-3xl font-bold text-white">Create Account</h1>
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         </div>
+
         <form className="space-y-4" onSubmit={handleSubmit}>
           <input
             required
             type="text"
             placeholder="Full Name"
-            className="w-full bg-black border border-white/20 rounded-xl p-4 text-white outline-none focus:border-blue-500"
+            className="w-full bg-black border border-white/20 rounded-xl p-4 text-white"
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
+
           <input
             required
             type="email"
             placeholder="Email Address"
-            className="w-full bg-black border border-white/20 rounded-xl p-4 text-white outline-none focus:border-blue-500"
+            className="w-full bg-black border border-white/20 rounded-xl p-4 text-white"
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })
             }
           />
+
           <input
             required
             type="password"
             placeholder="Create Password"
-            className="w-full bg-black border border-white/20 rounded-xl p-4 text-white outline-none focus:border-blue-500"
+            className="w-full bg-black border border-white/20 rounded-xl p-4 text-white"
             onChange={(e) =>
               setFormData({ ...formData, password: e.target.value })
             }
@@ -74,11 +90,12 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-all"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl"
           >
             Sign Up
           </button>
         </form>
+
         <div className="relative my-8">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t border-white/10"></span>
@@ -87,9 +104,10 @@ export default function RegisterPage() {
             <span className="bg-[#111] px-2 text-gray-500">Or use Social</span>
           </div>
         </div>
+
         <button
-          onClick={() => signIn("google", { callbackUrl: "/items" })}
-          className="w-full bg-white text-black font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-200 transition-all"
+          onClick={() => signIn("google", { callbackUrl: "/" })}
+          className="w-full bg-white text-black font-bold py-4 rounded-xl flex items-center justify-center gap-3"
         >
           <img
             src="https://www.svgrepo.com/show/355037/google.svg"
@@ -98,12 +116,13 @@ export default function RegisterPage() {
           />
           Sign up with Google
         </button>
+
         <p className="text-center text-gray-500 mt-8 text-sm">
           Already have an account?{" "}
           <Link href="/login" className="text-blue-500 hover:underline">
             Login
           </Link>
-        </p>{" "}
+        </p>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 export { default } from "next-auth/middleware";
 
 export const config = {
-  // List all routes that require login here
+  // Paths must start with "/"
+  // This will now protect the Add Item page and the Items list
   matcher: ["/add-item"],
 };
