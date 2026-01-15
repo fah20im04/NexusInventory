@@ -3,20 +3,22 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-const Item = require("./models/Item"); // Import the model
+const Item = require("./models/Item");
 const bcrypt = require("bcryptjs");
-const User = require("./models/User"); // 👈 VERY IMPORTANT
-
+const User = require("./models/User");
 const app = express();
 
 // Middleware
+const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
+
 app.use(
   cors({
-    origin: "http://localhost:3000", // Allow your Next.js app
+    origin: allowedOrigin,
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
+    credentials: true, // needed if sending cookies/auth headers
   })
 );
+
 app.use(express.json());
 
 // -------------------
@@ -78,7 +80,7 @@ app.post("/api/register", async (req, res) => {
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
-    console.error("REGISTER ERROR:", err); // 👈 So you SEE the real crash reason
+    console.error("REGISTER ERROR:", err);
     res.status(500).json({ message: "Server error during registration" });
   }
 });
