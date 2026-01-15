@@ -37,16 +37,19 @@ export default function AddItemPage() {
 
     try {
       // Note: Using a relative path works if your API route is in the same Next.js app
-      const response = await fetch("http://localhost:5000/api/items", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          price: parseFloat(formData.price),
-          stock: parseInt(formData.stock),
-          userId: session?.user?.id, // Link item to the logged-in user
-        }),
-      });
+      const response = await fetch(
+        "https://nexus-inventory-five.vercel.app/api/items",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...formData,
+            price: parseFloat(formData.price),
+            stock: parseInt(formData.stock),
+            userId: session?.user?.id, // Link item to the logged-in user
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to add item to inventory");

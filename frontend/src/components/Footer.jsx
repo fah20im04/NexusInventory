@@ -139,7 +139,7 @@ export default function Footer() {
         <Modal title="API Documentation" onClose={() => setOpenModal(null)}>
           <p className="mb-2 font-semibold">Base URL:</p>
           <code className="block bg-black p-2 rounded mb-4 text-green-400">
-            http://localhost:5000/api
+            https://nexus-inventory-five.vercel.app/api
           </code>
 
           <ul className="space-y-2">

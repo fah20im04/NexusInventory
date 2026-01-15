@@ -6,9 +6,12 @@ export default async function ItemsPage() {
   let items = [];
 
   try {
-    const response = await fetch("http://localhost:5000/api/items", {
-      cache: "no-store",
-    });
+    const response = await fetch(
+      "https://nexus-inventory-five.vercel.app/api/items",
+      {
+        cache: "no-store",
+      }
+    );
     items = await response.json();
   } catch (error) {
     console.error("Failed to fetch items:", error);

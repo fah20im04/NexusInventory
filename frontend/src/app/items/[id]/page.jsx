@@ -1,9 +1,12 @@
 export default async function ItemDetailsPage({ params }) {
   const { id } = await params;
 
-  const res = await fetch(`http://localhost:5000/api/items/${id}`, {
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `https://nexus-inventory-five.vercel.app/api/items/${id}`,
+    {
+      cache: "no-store",
+    }
+  );
 
   if (!res.ok) {
     return (
