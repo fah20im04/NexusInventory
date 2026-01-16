@@ -1,19 +1,41 @@
+import { headers } from "next/headers";
+
 export default async function ItemDetailsPage({ params }) {
+  // ✅ FIX 1: await params (Next 15+ requirement)
   const { id } = await params;
 
-  const res = await fetch(`/api/items/${id}`, {
-    cache: "no-store",
-  });
+  // ✅ FIX 2: await headers()
+  const headersList = await headers();
+  const host = headersList.get("host");
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  const baseUrl = `${protocol}://${host}`;
 
-  if (!res.ok) {
+  let item = null;
+
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/items/${id}`,
+      {
+        cache: "no-store",
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Item not found");
+    }
+
+    item = await res.json();
+  } catch (error) {
+    console.error("Error fetching item:", error);
+  }
+
+  if (!item) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#020617] text-white">
         Item not found
       </div>
     );
   }
-
-  const item = await res.json();
 
   return (
     <section className="relative min-h-screen bg-gradient-to-b from-[#0f172a] to-[#020617] py-24">
