@@ -8,8 +8,7 @@ Nexus Inventory is a full-stack inventory management web application built using
 
 ## 🚀 Live Demo
 
-Frontend: [https://nexus-inventory-five.vercel.app](https://nexus-inventory-five.vercel.app)
-Backend: [https://your-backend-url.onrender.com](https://your-backend-url.onrender.com)
+Frontend: [https://nexus-inventory-five.vercel.app](https://nexus-inventory-ogka.vercel.app/)
 
 ---
 
@@ -17,14 +16,7 @@ Backend: [https://your-backend-url.onrender.com](https://your-backend-url.onrend
 
 A modern, full‑stack inventory management system built with **Next.js, MongoDB, Express, Node.js, and NextAuth**. Nexus Inventory provides secure authentication, real‑time product management, and a clean, responsive UI suitable for production use.
 
----
 
-## 🚀 Live Demo
-
-Frontend: [https://nexus-inventory-five.vercel.app](https://nexus-inventory-five.vercel.app)
-Backend: [https://your-backend-url.onrender.com](https://your-backend-url.onrender.com)
-
----
 
 ## 📌 Implemented Features
 
