@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
@@ -13,44 +14,54 @@ export default function RegisterPage() {
   });
 
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       const res = await fetch(
-        "https://nexus-inventory-five.vercel.app/api/register",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/register`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify(formData),
         }
       );
 
       const data = await res.json();
 
-      if (res.ok) {
-        await signIn("credentials", {
-          email: formData.email,
-          password: formData.password,
-          redirect: true,
-          callbackUrl: "/",
-        });
+      if (!res.ok) {
+        setError(data.message || "Registration failed");
+        setLoading(false);
+        return;
+      }
 
-        if (!loginRes.error) {
-          router.push("/");
-          toast.success("Registration and login successful!");
-        } else {
-          toast.error("Registration successful, but login failed.");
-          setError("Login failed after registration");
-        }
+      // Auto login after successful registration
+      const loginRes = await signIn("credentials", {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      });
+
+      if (loginRes?.error) {
+        toast.error("Registration successful, but login failed.");
+        setError("Login failed after registration");
       } else {
-        setError(data.message || "Something went wrong");
+        toast.success("Registration and login successful!");
+        router.push("/");
       }
     } catch (err) {
+      console.error("REGISTER ERROR:", err);
       setError("Failed to connect to server");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,6 +79,7 @@ export default function RegisterPage() {
             type="text"
             placeholder="Full Name"
             className="w-full bg-black border border-white/20 rounded-xl p-4 text-white"
+            value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
 
@@ -76,6 +88,7 @@ export default function RegisterPage() {
             type="email"
             placeholder="Email Address"
             className="w-full bg-black border border-white/20 rounded-xl p-4 text-white"
+            value={formData.email}
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })
             }
@@ -86,6 +99,7 @@ export default function RegisterPage() {
             type="password"
             placeholder="Create Password"
             className="w-full bg-black border border-white/20 rounded-xl p-4 text-white"
+            value={formData.password}
             onChange={(e) =>
               setFormData({ ...formData, password: e.target.value })
             }
@@ -93,9 +107,10 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl"
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl disabled:opacity-50"
           >
-            Sign Up
+            {loading ? "Creating Account..." : "Sign Up"}
           </button>
         </form>
 

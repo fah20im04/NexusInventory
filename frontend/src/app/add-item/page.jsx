@@ -38,7 +38,7 @@ export default function AddItemPage() {
     try {
       // Note: Using a relative path works if your API route is in the same Next.js app
       const response = await fetch(
-        "https://nexus-inventory-five.vercel.app/api/items",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/items`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -7,8 +7,10 @@ export default async function ItemsPage() {
 
   try {
     const response = await fetch(
-      "https://nexus-inventory-five.vercel.app/api/items",
-      { cache: "no-store" }
+      `${process.env.NEXT_PUBLIC_API_URL}/api/items`,
+      {
+        cache: "no-store",
+      }
     );
     items = await response.json();
   } catch (error) {
