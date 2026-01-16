@@ -13,9 +13,9 @@ const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
 
 app.use(
   cors({
-    origin: allowedOrigin,
+    origin: "https://nexus-inventory-ogka.vercel.app" || allowedOrigin,
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true, // needed if sending cookies/auth headers
+    credentials: true,
   })
 );
 
